@@ -136,6 +136,9 @@
     <Image Include="res\icon1.ico" />
     <Image Include="res\war3key.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
