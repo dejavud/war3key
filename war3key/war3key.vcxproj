@@ -113,7 +113,6 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="KeyTable.cpp" />
     <ClCompile Include="War3KeyImpl.cpp" />
     <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -123,7 +122,6 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="KeyTable.h" />
     <ClInclude Include="War3KeyImpl.h" />
     <ClInclude Include="MainDlg.h" />
     <ClInclude Include="resource.h" />

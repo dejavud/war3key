@@ -84,12 +84,12 @@ BOOL MainDlg::Init()
     m_editNum1.SubclassWindow(GetDlgItem(IDC_EDIT_NUM1));
     m_editNum2.SubclassWindow(GetDlgItem(IDC_EDIT_NUM2));
 
-    m_editNum7.SetWindowText(m_keyTable.GetKeyName(VK_NUMPAD7));
-    m_editNum8.SetWindowText(m_keyTable.GetKeyName(VK_NUMPAD8));
-    m_editNum4.SetWindowText(m_keyTable.GetKeyName(VK_NUMPAD4));
-    m_editNum5.SetWindowText(m_keyTable.GetKeyName(VK_NUMPAD5));
-    m_editNum1.SetWindowText(m_keyTable.GetKeyName(VK_NUMPAD1));
-    m_editNum2.SetWindowText(m_keyTable.GetKeyName(VK_NUMPAD2));
+    m_editNum7.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD7));
+    m_editNum8.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD8));
+    m_editNum4.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD4));
+    m_editNum5.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD5));
+    m_editNum1.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD1));
+    m_editNum2.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD2));
 
     GetDlgItem(IDC_STATIC).SetFocus(); // ensure that no edit control gets the focus when dialog startup
 
@@ -110,7 +110,7 @@ void MainDlg::Cleanup()
     KillTimer(TIMER_ID_MONITOR);
 
     War3KeyImpl::Instance().UninstallHook();
-
+    War3KeyImpl::Instance().SetDebugPrivilege(FALSE);
 }
 
 void MainDlg::CloseDialog(int nVal)
@@ -153,7 +153,6 @@ void MainDlg::War3Monitor()
     if (hWar3Wnd != NULL) { // found the game window!
         if (impl.IsHooked())
             return;
-        impl.SetKeyReplaceTable(m_keyTable.ReplaceTable());
         impl.SetDebugPrivilege(TRUE);
         if (impl.InstallHook(hWar3Wnd)) {
             CString s;
@@ -180,13 +179,13 @@ void MainDlg::OnKeyDownInEdit(UINT nChar, UINT nRepCnt, UINT nFlags)
     DWORD vkCode = nChar;
 
     CEdit editControl(hEditWnd);
-    CString keyName = m_keyTable.GetKeyName(vkCode);
+    CString keyName = War3KeyImpl::Instance().GetKeyName(vkCode);
     editControl.SetWindowText(keyName);
 
     if (keyName.IsEmpty()) // this keystroke is not supported to replace
         return;
 
-    KeyReplaceTable& keyReplaceTable = m_keyTable.ReplaceTable();
+    KeyReplaceTable& keyReplaceTable = War3KeyImpl::Instance().ReplaceTable();
     if (hEditWnd == m_editNum7)
         keyReplaceTable[vkCode] = VK_NUMPAD7;
     else if (hEditWnd == m_editNum8)
@@ -199,8 +198,6 @@ void MainDlg::OnKeyDownInEdit(UINT nChar, UINT nRepCnt, UINT nFlags)
         keyReplaceTable[vkCode] = VK_NUMPAD1;
     else if (hEditWnd == m_editNum2)
         keyReplaceTable[vkCode] = VK_NUMPAD2;
-
-    War3KeyImpl::Instance().SetKeyReplaceTable(keyReplaceTable);
 }
 
 void MainDlg::OnCharInEdit(UINT nChar, UINT nRepCnt, UINT nFlags)
