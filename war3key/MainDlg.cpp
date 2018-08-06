@@ -84,12 +84,21 @@ BOOL MainDlg::Init()
     m_editNum1.SubclassWindow(GetDlgItem(IDC_EDIT_NUM1));
     m_editNum2.SubclassWindow(GetDlgItem(IDC_EDIT_NUM2));
 
-    m_editNum7.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD7));
-    m_editNum8.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD8));
-    m_editNum4.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD4));
-    m_editNum5.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD5));
-    m_editNum1.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD1));
-    m_editNum2.SetWindowText(War3KeyImpl::Instance().GetKeyName(VK_NUMPAD2));
+    War3KeyImpl& impl = War3KeyImpl::Instance();
+
+    m_configFile.Init();
+    if (!m_configFile.Load())
+        m_configFile.Save();  // if the config file dose not exist, new one
+
+    KeyReplaceTable& savedKeys = m_configFile.GetSavedKeys();
+    KeyReplaceTable& keyReplaceTable = impl.GetKeyReplaceTable();
+    keyReplaceTable = savedKeys;
+    m_editNum7.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD7]));
+    m_editNum8.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD8]));
+    m_editNum4.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD4]));
+    m_editNum5.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD5]));
+    m_editNum1.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD1]));
+    m_editNum2.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD2]));
 
     GetDlgItem(IDC_STATIC).SetFocus(); // ensure that no edit control gets the focus when dialog startup
 
@@ -185,19 +194,22 @@ void MainDlg::OnKeyDownInEdit(UINT nChar, UINT nRepCnt, UINT nFlags)
     if (keyName.IsEmpty()) // this keystroke is not supported to replace
         return;
 
-    KeyReplaceTable& keyReplaceTable = War3KeyImpl::Instance().ReplaceTable();
+    KeyReplaceTable& keyReplaceTable = War3KeyImpl::Instance().GetKeyReplaceTable();
     if (hEditWnd == m_editNum7)
-        keyReplaceTable[vkCode] = VK_NUMPAD7;
+        keyReplaceTable[VK_NUMPAD7] = vkCode;
     else if (hEditWnd == m_editNum8)
-        keyReplaceTable[vkCode] = VK_NUMPAD8;
+        keyReplaceTable[VK_NUMPAD8] = vkCode;
     else if (hEditWnd == m_editNum4)
-        keyReplaceTable[vkCode] = VK_NUMPAD4;
+        keyReplaceTable[VK_NUMPAD4] = vkCode;
     else if (hEditWnd == m_editNum5)
-        keyReplaceTable[vkCode] = VK_NUMPAD5;
+        keyReplaceTable[VK_NUMPAD5] = vkCode;
     else if (hEditWnd == m_editNum1)
-        keyReplaceTable[vkCode] = VK_NUMPAD1;
+        keyReplaceTable[VK_NUMPAD1] = vkCode;
     else if (hEditWnd == m_editNum2)
-        keyReplaceTable[vkCode] = VK_NUMPAD2;
+        keyReplaceTable[VK_NUMPAD2] = vkCode;
+
+    m_configFile.GetSavedKeys() = keyReplaceTable;
+    m_configFile.Save();
 }
 
 void MainDlg::OnCharInEdit(UINT nChar, UINT nRepCnt, UINT nFlags)

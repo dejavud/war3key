@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Config.h"
+
 #define MSG_MAP_ID_EDIT 1
 
 class MainDlg : public CDialogImpl<MainDlg>, public CUpdateUI<MainDlg>,
@@ -60,4 +62,5 @@ private:
 private:
     CStatusBarCtrl m_statusBar;
     CContainedWindow m_editNum7, m_editNum8, m_editNum4, m_editNum5, m_editNum1, m_editNum2;
+    Config m_configFile;
 };

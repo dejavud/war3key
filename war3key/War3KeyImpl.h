@@ -27,7 +27,7 @@ public:
 
     void InitKeyNameTable();
     CString GetKeyName(DWORD vkCode) const;
-    KeyReplaceTable& ReplaceTable();
+    KeyReplaceTable& GetKeyReplaceTable();
 
 private:
     static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);

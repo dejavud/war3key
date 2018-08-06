@@ -83,13 +83,14 @@ BOOL War3KeyImpl::ReplaceKey(DWORD srcKey)
     if (IsChatBoxOpen()) // may NOT work properly
         return FALSE;
 
-    KeyReplaceTable::iterator it = m_replaceTable.find(srcKey);
-    if (it != m_replaceTable.end()) {
-        BYTE destKey = (BYTE)it->second;
-        BYTE scanCode = (BYTE)::MapVirtualKey(destKey, MAPVK_VK_TO_VSC);
-        ::keybd_event(destKey, scanCode, 0, 0);
-        ::keybd_event(destKey, scanCode, KEYEVENTF_KEYUP, 0);
-        return TRUE;
+    for (KeyReplaceTable::iterator it = m_replaceTable.begin(); it != m_replaceTable.end(); it++) {
+        if (it->second == srcKey) {
+            BYTE destKey = (BYTE)it->first;
+            BYTE scanCode = (BYTE)::MapVirtualKey(destKey, MAPVK_VK_TO_VSC);
+            ::keybd_event(destKey, scanCode, 0, 0);
+            ::keybd_event(destKey, scanCode, KEYEVENTF_KEYUP, 0);
+            return TRUE;
+        }
     }
 
     return FALSE;
@@ -164,8 +165,6 @@ BOOL War3KeyImpl::SetDebugPrivilege(BOOL enable)
 
 void War3KeyImpl::InitKeyNameTable()
 {
-    m_replaceTable.clear();
-
     m_nameTable[VK_NUMPAD0] = _T("Num 0");
     m_nameTable[VK_NUMPAD1] = _T("Num 1");
     m_nameTable[VK_NUMPAD2] = _T("Num 2");
@@ -254,7 +253,7 @@ CString War3KeyImpl::GetKeyName(DWORD vkCode) const
         return _T("");
 }
 
-KeyReplaceTable& War3KeyImpl::ReplaceTable()
+KeyReplaceTable& War3KeyImpl::GetKeyReplaceTable()
 {
     return m_replaceTable;
 }
