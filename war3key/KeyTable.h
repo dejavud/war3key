@@ -11,11 +11,9 @@ public:
     ~KeyTable();
 
     KeyReplaceTable& ReplaceTable();
-    KeyNameTable& NameTable();
+    CString GetKeyName(DWORD vkCode) const;
 
     void Init();
-    
-    CString GetKeyName(DWORD vkCode) const;
 
 private:
     KeyReplaceTable m_replaceTable;

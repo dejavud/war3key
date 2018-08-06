@@ -16,16 +16,18 @@ KeyReplaceTable& KeyTable::ReplaceTable()
     return m_replaceTable;
 }
 
-KeyNameTable& KeyTable::NameTable()
+CString KeyTable::GetKeyName(DWORD vkCode) const
 {
-    return m_nameTable;
+    KeyNameTable::const_iterator it = m_nameTable.find(vkCode);
+    if (it != m_nameTable.end())
+        return it->second;
+    else
+        return _T("");
 }
 
 void KeyTable::Init()
 {
-    // Virtual Keys range is from 0x01 to 0xff
-    for (DWORD i = 0x01; i <= 0xff; i++)
-        m_replaceTable[i] = i;
+    m_replaceTable.clear();
 
     m_nameTable[VK_NUMPAD0] = _T("Num 0");
     m_nameTable[VK_NUMPAD1] = _T("Num 1");
@@ -104,13 +106,4 @@ void KeyTable::Init()
     m_nameTable[VK_OEM_5] = _T("\\");
     m_nameTable[VK_OEM_6] = _T("]");
     m_nameTable[VK_OEM_7] = _T("'");
-}
-
-CString KeyTable::GetKeyName(DWORD vkCode) const
-{
-    KeyNameTable::const_iterator it = m_nameTable.find(vkCode);
-    if (it != m_nameTable.end())
-        return it->second;
-    else
-        return _T("");
 }
