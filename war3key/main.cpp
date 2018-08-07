@@ -2,10 +2,10 @@
 //
 
 #include "stdafx.h"
-
 #include "resource.h"
-
 #include "MainDlg.h"
+
+#define SINGLE_INSTANCE_MUTEX_NAME _T("B0B600D0-2E0F-4ED4-A370-DD59AD63735E")
 
 CAppModule _Module;
 
@@ -32,6 +32,13 @@ int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpstrCmdLine, int nCmdShow)
 {
+    // only one instance can be run
+    HANDLE hMutex = ::OpenMutex(MUTEX_ALL_ACCESS, FALSE, SINGLE_INSTANCE_MUTEX_NAME);
+    if (hMutex != NULL) // a instance is already running 
+        return 0;
+    else
+        hMutex = ::CreateMutex(NULL, FALSE, SINGLE_INSTANCE_MUTEX_NAME);
+
 	HRESULT hRes = ::CoInitialize(NULL);
 // If you are running on NT 4.0 or higher you can use the following call instead to 
 // make the EXE free threaded. This means that calls come in on a random RPC thread.
