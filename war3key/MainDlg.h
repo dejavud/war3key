@@ -23,16 +23,16 @@ public:
 	BEGIN_UPDATE_UI_MAP(MainDlg)
 	END_UPDATE_UI_MAP()
 
-	BEGIN_MSG_MAP_EX(MainDlg)
+	BEGIN_MSG_MAP(MainDlg)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
         MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
-        MSG_WM_CLOSE(OnClose)
-        MSG_WM_TIMER(OnTimer)
-        COMMAND_ID_HANDLER_EX(ID_FILE_EXIT, OnMenuFileExit)
-        COMMAND_ID_HANDLER_EX(ID_HELP_ABOUT, OnMenuHelpAbout)
+        MESSAGE_HANDLER(WM_CLOSE, OnClose)
+        MESSAGE_HANDLER(WM_TIMER, OnTimer)
+        COMMAND_ID_HANDLER(ID_FILE_EXIT, OnMenuFileExit)
+        COMMAND_ID_HANDLER(ID_HELP_ABOUT, OnMenuHelpAbout)
     ALT_MSG_MAP(MSG_MAP_ID_EDIT)
-        MSG_WM_KEYDOWN(OnKeyDownInEdit)
-        MSG_WM_CHAR(OnCharInEdit)
+        MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDownInEdit)
+        MESSAGE_HANDLER(WM_CHAR, OnCharInEdit)
 	END_MSG_MAP()
 
 // Handler prototypes (uncomment arguments if needed):
@@ -42,15 +42,15 @@ public:
 
 	LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
     LRESULT OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-    void OnClose();
+    LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 
-    void OnMenuFileExit(UINT uNotifyCode, int nID, CWindow wndCtl);
-    void OnMenuHelpAbout(UINT uNotifyCode, int nID, CWindow wndCtl);
+    LRESULT OnMenuFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+    LRESULT OnMenuHelpAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
-    void OnTimer(UINT_PTR nIDEvent);
+    LRESULT OnTimer(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 
-    void OnKeyDownInEdit(UINT nChar, UINT nRepCnt, UINT nFlags);
-    void OnCharInEdit(UINT nChar, UINT nRepCnt, UINT nFlags);
+    LRESULT OnKeyDownInEdit(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+    LRESULT OnCharInEdit(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 
 private:
     BOOL Init();

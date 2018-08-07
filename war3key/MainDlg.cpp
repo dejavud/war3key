@@ -130,28 +130,33 @@ void MainDlg::CloseDialog(int nVal)
     ::PostQuitMessage(nVal);
 }
 
-void MainDlg::OnClose()
+LRESULT MainDlg::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     CloseDialog(0);
+    return 0;
 }
 
-void MainDlg::OnMenuFileExit(UINT uNotifyCode, int nID, CWindow wndCtl)
+LRESULT MainDlg::OnMenuFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     CloseDialog(0);
+    return 0;
 }
 
-void MainDlg::OnMenuHelpAbout(UINT uNotifyCode, int nID, CWindow wndCtl)
+LRESULT MainDlg::OnMenuHelpAbout(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     CString title, tooltips;
     title.LoadString(IDR_MAINFRAME);
     tooltips.LoadString(IDS_TOOLTIPS);
     MessageBox(tooltips, title, MB_OK | MB_ICONINFORMATION);
+    return 0;
 }
 
-void MainDlg::OnTimer(UINT_PTR nIDEvent)
+LRESULT MainDlg::OnTimer(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
+    UINT_PTR nIDEvent = (UINT_PTR)wParam;
     if (nIDEvent == TIMER_ID_MONITOR)
         War3Monitor();
+    return 0;
 }
 
 void MainDlg::War3Monitor()
@@ -180,19 +185,19 @@ void MainDlg::War3Monitor()
     }
 }
 
-void MainDlg::OnKeyDownInEdit(UINT nChar, UINT nRepCnt, UINT nFlags)
+LRESULT MainDlg::OnKeyDownInEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     HWND hEditWnd = ::GetFocus();
     ATLASSERT(hEditWnd != NULL);
 
-    DWORD vkCode = nChar;
+    DWORD vkCode = (DWORD)wParam;
 
     CEdit editControl(hEditWnd);
     CString keyName = War3KeyImpl::Instance().GetKeyName(vkCode);
     editControl.SetWindowText(keyName);
 
     if (keyName.IsEmpty()) // this keystroke is not supported to replace
-        return;
+        return 0;
 
     KeyReplaceTable& keyReplaceTable = War3KeyImpl::Instance().GetKeyReplaceTable();
     if (hEditWnd == m_editNum7)
@@ -210,9 +215,12 @@ void MainDlg::OnKeyDownInEdit(UINT nChar, UINT nRepCnt, UINT nFlags)
 
     m_configFile.GetSavedKeys() = keyReplaceTable;
     m_configFile.Save();
+
+    return 0;
 }
 
-void MainDlg::OnCharInEdit(UINT nChar, UINT nRepCnt, UINT nFlags)
+LRESULT MainDlg::OnCharInEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
     // bypass
+    return 0;
 }
