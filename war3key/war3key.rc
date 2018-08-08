@@ -79,8 +79,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -88,25 +88,25 @@ VS_VERSION_INFO VERSIONINFO
  FILEFLAGS 0x0L
 #endif
  FILEOS 0x4L
- FILETYPE 0x2L
+ FILETYPE 0x1L
  FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904b0"
+        BLOCK "080404b0"
         BEGIN
-            VALUE "FileDescription", "war3key Module"
-            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "FileDescription", "War3Key"
+            VALUE "FileVersion", "0.1.0.0"
             VALUE "InternalName", "war3key"
-            VALUE "LegalCopyright", "Copyright 2018"
+            VALUE "LegalCopyright", "Copyright 2018 ด๓นท"
             VALUE "OriginalFilename", "war3key.exe"
-            VALUE "ProductName", "war3key Module"
-            VALUE "ProductVersion", "1, 0, 0, 1"
+            VALUE "ProductName", "War3Key"
+            VALUE "ProductVersion", "0.1.0.0"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x409, 1200
+        VALUE "Translation", 0x804, 1200
     END
 END
 
