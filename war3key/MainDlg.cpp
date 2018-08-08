@@ -8,18 +8,19 @@
 #include "MainDlg.h"
 #include "War3KeyImpl.h"
 
-#define TIMER_ID_MONITOR 1024
+
 #define WAR3_WND_CLASSNAME _T("Warcraft III")
 #define WAR3_WND_WINDOWNAME _T("Warcraft III")
 
 
 MainDlg::MainDlg() :
-    m_editNum7(this, MSG_MAP_ID_EDIT),
-    m_editNum8(this, MSG_MAP_ID_EDIT),
-    m_editNum4(this, MSG_MAP_ID_EDIT),
-    m_editNum5(this, MSG_MAP_ID_EDIT),
-    m_editNum1(this, MSG_MAP_ID_EDIT),
-    m_editNum2(this, MSG_MAP_ID_EDIT)
+    m_editNum7(this, MSG_MAP_ID_1),
+    m_editNum8(this, MSG_MAP_ID_1),
+    m_editNum4(this, MSG_MAP_ID_1),
+    m_editNum5(this, MSG_MAP_ID_1),
+    m_editNum1(this, MSG_MAP_ID_1),
+    m_editNum2(this, MSG_MAP_ID_1),
+    m_minimizeToTray(FALSE)
 {
 
 }
@@ -109,6 +110,11 @@ BOOL MainDlg::Init()
     s.LoadString(IDS_STATUSINFO_READY);
     m_statusBar.SetText(SB_SIMPLEID, s);
 
+    m_trayIcon.Install(m_hWnd, WM_TRAY_ICON);
+    m_trayMenu.Init(m_hWnd);
+    m_minimizeToTray = m_configFile.GetMinimizeToTray();
+    CheckMinimizeToTray(m_minimizeToTray);
+
     SetTimer(TIMER_ID_MONITOR, 500);
 
     return TRUE;
@@ -118,8 +124,12 @@ void MainDlg::Cleanup()
 {
     KillTimer(TIMER_ID_MONITOR);
 
+    m_trayIcon.Remove();
+
     War3KeyImpl::Instance().UninstallHook();
     War3KeyImpl::Instance().SetDebugPrivilege(FALSE);
+
+    m_configFile.Save();
 }
 
 void MainDlg::CloseDialog(int nVal)
@@ -132,13 +142,27 @@ void MainDlg::CloseDialog(int nVal)
 
 LRESULT MainDlg::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-    CloseDialog(0);
+    if (m_minimizeToTray)
+        ShowWindow(SW_HIDE);
+    else
+        CloseDialog(0);
     return 0;
 }
 
 LRESULT MainDlg::OnMenuFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     CloseDialog(0);
+    return 0;
+}
+
+LRESULT MainDlg::OnMenuMinimizeToTray(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
+{
+    m_minimizeToTray = !m_minimizeToTray;
+    CheckMinimizeToTray(m_minimizeToTray);
+    
+    m_configFile.SetMinimizeToTray(m_minimizeToTray);
+    m_configFile.Save();
+
     return 0;
 }
 
@@ -223,4 +247,30 @@ LRESULT MainDlg::OnCharInEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 {
     // bypass
     return 0;
+}
+
+LRESULT MainDlg::OnTrayIcon(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+    if (LOWORD(lParam) == WM_RBUTTONUP) {
+        m_trayMenu.Show();
+    }
+    else if (LOWORD(lParam) == WM_LBUTTONDBLCLK) {
+        ShowWindow(SW_SHOW);
+    }
+
+    return 0;
+}
+
+LRESULT MainDlg::OnTrayExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
+{
+    CloseDialog(0);
+    return 0;
+}
+
+void MainDlg::CheckMinimizeToTray(BOOL& action)
+{
+    CMenuHandle menuMain(::GetMenu(m_hWnd));
+    CMenuHandle menuFile(menuMain.GetSubMenu(0));
+
+    menuFile.CheckMenuItem(ID_FILE_MINIMIZETOTRAY, MF_BYCOMMAND | action ? MF_CHECKED : MF_UNCHECKED);
 }

@@ -7,6 +7,7 @@ using namespace std;
 using json = nlohmann::json;
 
 #define CONFIG_SETTINGS         "Settings"
+#define CONFIG_SETTINGS_TRAY    "MinimizeToTray"
 #define CONFIG_REPLACEKEYS      "ReplaceKeys"
 #define CONFIG_KEY_NUM7         "Num7"
 #define CONFIG_KEY_NUM8         "Num8"
@@ -15,7 +16,8 @@ using json = nlohmann::json;
 #define CONFIG_KEY_NUM1         "Num1"
 #define CONFIG_KEY_NUM2         "Num2"
 
-Config::Config()
+Config::Config() :
+    m_minimizeToTray(FALSE)
 {
 }
 
@@ -32,6 +34,8 @@ void Config::Init()
     m_savedKeys[VK_NUMPAD5] = VK_NUMPAD5;
     m_savedKeys[VK_NUMPAD1] = VK_NUMPAD1;
     m_savedKeys[VK_NUMPAD2] = VK_NUMPAD2;
+
+    m_minimizeToTray = TRUE; // default checked
 }
 
 BOOL Config::Load()
@@ -47,7 +51,7 @@ BOOL Config::Load()
         if (j.find(CONFIG_SETTINGS) != j.end()) {
             json settings = j[CONFIG_SETTINGS];
             if (settings.is_object()) {
-                
+                m_minimizeToTray = (BOOL)settings.at(CONFIG_SETTINGS_TRAY).get<int>();
             }
         }
 
@@ -77,6 +81,7 @@ BOOL Config::Save()
         json j;
 
         json settings;
+        settings[CONFIG_SETTINGS_TRAY] = (int)m_minimizeToTray;
         j[CONFIG_SETTINGS] = settings;
 
         json keys;
@@ -105,6 +110,16 @@ BOOL Config::Save()
 KeyReplaceTable& Config::GetSavedKeys()
 {
     return m_savedKeys;
+}
+
+BOOL Config::GetMinimizeToTray() const
+{
+    return m_minimizeToTray;
+}
+
+void Config::SetMinimizeToTray(BOOL enable)
+{
+    m_minimizeToTray = enable;
 }
 
 const CString& Config::GetConfigFilePath()

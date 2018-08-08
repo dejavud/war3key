@@ -16,6 +16,9 @@ public:
 public:
     KeyReplaceTable& GetSavedKeys();
 
+    BOOL GetMinimizeToTray() const;
+    void SetMinimizeToTray(BOOL enable);
+
 private:
     const CString& GetConfigFilePath();
 
@@ -25,5 +28,6 @@ private:
 private:
     KeyReplaceTable m_savedKeys;
     CString m_filePath;
+    BOOL m_minimizeToTray;
 };
 

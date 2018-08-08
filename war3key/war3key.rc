@@ -131,11 +131,20 @@ IDR_MAINMENU MENU
 BEGIN
     POPUP "File"
     BEGIN
+        MENUITEM "Minimize to Tray",            ID_FILE_MINIMIZETOTRAY
         MENUITEM "Exit",                        ID_FILE_EXIT
     END
     POPUP "Help"
     BEGIN
         MENUITEM "About",                       ID_HELP_ABOUT
+    END
+END
+
+IDR_TRAYMENU MENU
+BEGIN
+    POPUP "Tray"
+    BEGIN
+        MENUITEM "Exit",                        ID_TRAY_EXIT
     END
 END
 
