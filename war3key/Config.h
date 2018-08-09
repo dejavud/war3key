@@ -9,6 +9,7 @@ public:
     ~Config();
 
     void Init();
+    void ResetKeys();
 
     BOOL Load();
     BOOL Save();

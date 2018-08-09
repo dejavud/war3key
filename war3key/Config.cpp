@@ -28,14 +28,19 @@ Config::~Config()
 
 void Config::Init()
 {
+    ResetKeys();
+
+    m_minimizeToTray = TRUE; // default checked
+}
+
+void Config::ResetKeys()
+{
     m_savedKeys[VK_NUMPAD7] = VK_NUMPAD7;
     m_savedKeys[VK_NUMPAD8] = VK_NUMPAD8;
     m_savedKeys[VK_NUMPAD4] = VK_NUMPAD4;
     m_savedKeys[VK_NUMPAD5] = VK_NUMPAD5;
     m_savedKeys[VK_NUMPAD1] = VK_NUMPAD1;
     m_savedKeys[VK_NUMPAD2] = VK_NUMPAD2;
-
-    m_minimizeToTray = TRUE; // default checked
 }
 
 BOOL Config::Load()

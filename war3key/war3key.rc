@@ -131,7 +131,9 @@ IDR_MAINMENU MENU
 BEGIN
     POPUP "File"
     BEGIN
+        MENUITEM "Reset",                       ID_FILE_RESET
         MENUITEM "Minimize to Tray",            ID_FILE_MINIMIZETOTRAY
+        MENUITEM SEPARATOR
         MENUITEM "Exit",                        ID_FILE_EXIT
     END
     POPUP "Help"

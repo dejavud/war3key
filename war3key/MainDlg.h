@@ -30,6 +30,7 @@ public:
         MESSAGE_HANDLER(WM_CLOSE, OnClose)
         MESSAGE_HANDLER(WM_TIMER, OnTimer)
         COMMAND_ID_HANDLER(ID_FILE_EXIT, OnMenuFileExit)
+        COMMAND_ID_HANDLER(ID_FILE_RESET, OnMenuFileReset)
         COMMAND_ID_HANDLER(ID_FILE_MINIMIZETOTRAY, OnMenuMinimizeToTray)
         COMMAND_ID_HANDLER(ID_HELP_ABOUT, OnMenuHelpAbout)
         MESSAGE_HANDLER(WM_TRAY_ICON, OnTrayIcon)
@@ -49,6 +50,7 @@ public:
     LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 
     LRESULT OnMenuFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+    LRESULT OnMenuFileReset(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
     LRESULT OnMenuMinimizeToTray(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
     LRESULT OnMenuHelpAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
@@ -62,6 +64,7 @@ public:
 
 private:
     BOOL Init();
+    void InitKeyEdits();
 	void CloseDialog(int nVal);
     void Cleanup();
 

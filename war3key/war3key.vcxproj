@@ -125,7 +125,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConfigFile.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="TrayIcon.h" />
     <ClInclude Include="TrayMenu.h" />
     <ClInclude Include="War3KeyImpl.h" />

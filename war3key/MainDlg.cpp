@@ -85,21 +85,11 @@ BOOL MainDlg::Init()
     m_editNum1.SubclassWindow(GetDlgItem(IDC_EDIT_NUM1));
     m_editNum2.SubclassWindow(GetDlgItem(IDC_EDIT_NUM2));
 
-    War3KeyImpl& impl = War3KeyImpl::Instance();
-
     m_configFile.Init();
     if (!m_configFile.Load())
         m_configFile.Save();  // if the config file dose not exist, new one
 
-    KeyReplaceTable& savedKeys = m_configFile.GetSavedKeys();
-    KeyReplaceTable& keyReplaceTable = impl.GetKeyReplaceTable();
-    keyReplaceTable = savedKeys;
-    m_editNum7.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD7]));
-    m_editNum8.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD8]));
-    m_editNum4.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD4]));
-    m_editNum5.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD5]));
-    m_editNum1.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD1]));
-    m_editNum2.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD2]));
+    InitKeyEdits();
 
     GetDlgItem(IDC_STATIC).SetFocus(); // ensure that no edit control gets the focus when dialog startup
 
@@ -118,6 +108,21 @@ BOOL MainDlg::Init()
     SetTimer(TIMER_ID_MONITOR, 500);
 
     return TRUE;
+}
+
+void MainDlg::InitKeyEdits()
+{
+    War3KeyImpl& impl = War3KeyImpl::Instance();
+
+    KeyReplaceTable& savedKeys = m_configFile.GetSavedKeys();
+    KeyReplaceTable& keyReplaceTable = impl.GetKeyReplaceTable();
+    keyReplaceTable = savedKeys;
+    m_editNum7.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD7]));
+    m_editNum8.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD8]));
+    m_editNum4.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD4]));
+    m_editNum5.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD5]));
+    m_editNum1.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD1]));
+    m_editNum2.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD2]));
 }
 
 void MainDlg::Cleanup()
@@ -152,6 +157,16 @@ LRESULT MainDlg::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled
 LRESULT MainDlg::OnMenuFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
     CloseDialog(0);
+    return 0;
+}
+
+LRESULT MainDlg::OnMenuFileReset(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
+{
+    m_configFile.ResetKeys();
+    m_configFile.Save();
+
+    InitKeyEdits();
+
     return 0;
 }
 
