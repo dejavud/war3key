@@ -19,8 +19,7 @@ MainDlg::MainDlg() :
     m_editNum4(this, MSG_MAP_ID_1),
     m_editNum5(this, MSG_MAP_ID_1),
     m_editNum1(this, MSG_MAP_ID_1),
-    m_editNum2(this, MSG_MAP_ID_1),
-    m_minimizeToTray(FALSE)
+    m_editNum2(this, MSG_MAP_ID_1)
 {
 
 }
@@ -85,44 +84,46 @@ BOOL MainDlg::Init()
     m_editNum1.SubclassWindow(GetDlgItem(IDC_EDIT_NUM1));
     m_editNum2.SubclassWindow(GetDlgItem(IDC_EDIT_NUM2));
 
-    m_configFile.Init();
-    if (!m_configFile.Load())
-        m_configFile.Save();  // if the config file dose not exist, new one
+    m_config.Init();
+    if (!m_config.Load())
+        m_config.Save();  // if the config file dose not exist, new one
 
-    InitKeyEdits();
+    KeyConfig& keyConfig = War3KeyImpl::Instance().GetKeyConfig();
+    keyConfig.m_keyReplaceTable = m_config.m_savedKeys;
+    keyConfig.m_disableLWin = m_config.m_disableLWin;
+
+    InitControls();
 
     GetDlgItem(IDC_STATIC).SetFocus(); // ensure that no edit control gets the focus when dialog startup
 
     m_statusBar.Attach(GetDlgItem(IDC_STATUSBAR));
     m_statusBar.SetSimple(TRUE);
-
     CString s;
     s.LoadString(IDS_STATUSINFO_READY);
     m_statusBar.SetText(SB_SIMPLEID, s);
 
     m_trayIcon.Install(m_hWnd, WM_TRAY_ICON);
     m_trayMenu.Init(m_hWnd);
-    m_minimizeToTray = m_configFile.GetMinimizeToTray();
-    CheckMinimizeToTray(m_minimizeToTray);
+    CheckMinimizeToTray(m_config.m_minimizeToTray);
 
     SetTimer(TIMER_ID_MONITOR, 500);
 
     return TRUE;
 }
 
-void MainDlg::InitKeyEdits()
+void MainDlg::InitControls()
 {
     War3KeyImpl& impl = War3KeyImpl::Instance();
-
-    KeyReplaceTable& savedKeys = m_configFile.GetSavedKeys();
-    KeyReplaceTable& keyReplaceTable = impl.GetKeyReplaceTable();
-    keyReplaceTable = savedKeys;
+    KeyReplaceTable& keyReplaceTable = impl.GetKeyConfig().m_keyReplaceTable;
     m_editNum7.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD7]));
     m_editNum8.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD8]));
     m_editNum4.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD4]));
     m_editNum5.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD5]));
     m_editNum1.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD1]));
     m_editNum2.SetWindowText(impl.GetKeyName(keyReplaceTable[VK_NUMPAD2]));
+
+    CButton checkDisableLWin(GetDlgItem(IDC_CHECK_DISABLE_LWIN));
+    checkDisableLWin.SetCheck(impl.GetKeyConfig().m_disableLWin ? BST_CHECKED : BST_UNCHECKED);
 }
 
 void MainDlg::Cleanup()
@@ -134,7 +135,7 @@ void MainDlg::Cleanup()
     War3KeyImpl::Instance().UninstallHook();
     War3KeyImpl::Instance().SetDebugPrivilege(FALSE);
 
-    m_configFile.Save();
+    m_config.Save();
 }
 
 void MainDlg::CloseDialog(int nVal)
@@ -147,7 +148,7 @@ void MainDlg::CloseDialog(int nVal)
 
 LRESULT MainDlg::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-    if (m_minimizeToTray)
+    if (m_config.m_minimizeToTray)
         ShowWindow(SW_HIDE);
     else
         CloseDialog(0);
@@ -162,21 +163,19 @@ LRESULT MainDlg::OnMenuFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& 
 
 LRESULT MainDlg::OnMenuFileReset(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
-    m_configFile.ResetKeys();
-    m_configFile.Save();
+    m_config.Reset();
+    m_config.Save();
 
-    InitKeyEdits();
+    InitControls();
 
     return 0;
 }
 
 LRESULT MainDlg::OnMenuMinimizeToTray(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
-    m_minimizeToTray = !m_minimizeToTray;
-    CheckMinimizeToTray(m_minimizeToTray);
-    
-    m_configFile.SetMinimizeToTray(m_minimizeToTray);
-    m_configFile.Save();
+    m_config.m_minimizeToTray = !m_config.m_minimizeToTray;
+    CheckMinimizeToTray(m_config.m_minimizeToTray);
+    m_config.Save();
 
     return 0;
 }
@@ -238,7 +237,7 @@ LRESULT MainDlg::OnKeyDownInEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
     if (keyName.IsEmpty()) // this keystroke is not supported to replace
         return 0;
 
-    KeyReplaceTable& keyReplaceTable = War3KeyImpl::Instance().GetKeyReplaceTable();
+    KeyReplaceTable& keyReplaceTable = War3KeyImpl::Instance().GetKeyConfig().m_keyReplaceTable;
     if (hEditWnd == m_editNum7)
         keyReplaceTable[VK_NUMPAD7] = vkCode;
     else if (hEditWnd == m_editNum8)
@@ -252,8 +251,8 @@ LRESULT MainDlg::OnKeyDownInEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
     else if (hEditWnd == m_editNum2)
         keyReplaceTable[VK_NUMPAD2] = vkCode;
 
-    m_configFile.GetSavedKeys() = keyReplaceTable;
-    m_configFile.Save();
+    m_config.m_savedKeys = keyReplaceTable;
+    m_config.Save();
 
     return 0;
 }
@@ -288,4 +287,17 @@ void MainDlg::CheckMinimizeToTray(BOOL& action)
     CMenuHandle menuFile(menuMain.GetSubMenu(0));
 
     menuFile.CheckMenuItem(ID_FILE_MINIMIZETOTRAY, MF_BYCOMMAND | action ? MF_CHECKED : MF_UNCHECKED);
+}
+
+LRESULT MainDlg::OnBnClickedCheckDisableLWin(WORD NotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
+{
+    CButton checkBtn(hWndCtl);
+
+    BOOL checked = (checkBtn.GetCheck() == BST_CHECKED);
+    m_config.m_disableLWin = checked;
+    m_config.Save();
+
+    War3KeyImpl::Instance().GetKeyConfig().m_disableLWin = checked;
+
+    return 0;
 }

@@ -4,6 +4,15 @@
 typedef std::map<DWORD, DWORD> KeyReplaceTable;
 typedef std::map<DWORD, CString> KeyNameTable;
 
+struct KeyConfig
+{
+    KeyReplaceTable m_keyReplaceTable;
+    BOOL m_disableLWin;
+
+    KeyConfig() : m_disableLWin(FALSE) 
+    {}
+};
+
 class War3KeyImpl
 {
 public:
@@ -27,7 +36,8 @@ public:
 
     void InitKeyNameTable();
     CString GetKeyName(DWORD vkCode) const;
-    KeyReplaceTable& GetKeyReplaceTable();
+
+    KeyConfig& GetKeyConfig();
 
 private:
     static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
@@ -42,7 +52,7 @@ private:
     HWND m_hWar3Wnd;
     DWORD m_war3Pid;
     LPVOID m_war3GameDllBaseAddr;
-    KeyReplaceTable m_replaceTable;
     KeyNameTable m_nameTable;
+    KeyConfig m_keyConfig;
 };
 

@@ -83,7 +83,11 @@ BOOL War3KeyImpl::ReplaceKey(DWORD srcKey)
     if (IsChatBoxOpen()) // may NOT work properly
         return FALSE;
 
-    for (KeyReplaceTable::iterator it = m_replaceTable.begin(); it != m_replaceTable.end(); it++) {
+    if (m_keyConfig.m_disableLWin && srcKey == VK_LWIN)
+        return TRUE;
+
+    KeyReplaceTable& replaceKeyTable = m_keyConfig.m_keyReplaceTable;
+    for (KeyReplaceTable::iterator it = replaceKeyTable.begin(); it != replaceKeyTable.end(); it++) {
         if (it->second == srcKey) {
             BYTE destKey = (BYTE)it->first;
             BYTE scanCode = (BYTE)::MapVirtualKey(destKey, MAPVK_VK_TO_VSC);
@@ -253,7 +257,7 @@ CString War3KeyImpl::GetKeyName(DWORD vkCode) const
         return _T("");
 }
 
-KeyReplaceTable& War3KeyImpl::GetKeyReplaceTable()
+KeyConfig& War3KeyImpl::GetKeyConfig()
 {
-    return m_replaceTable;
+    return m_keyConfig;
 }

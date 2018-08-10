@@ -9,16 +9,10 @@ public:
     ~Config();
 
     void Init();
-    void ResetKeys();
+    void Reset();
 
     BOOL Load();
     BOOL Save();
-
-public:
-    KeyReplaceTable& GetSavedKeys();
-
-    BOOL GetMinimizeToTray() const;
-    void SetMinimizeToTray(BOOL enable);
 
 private:
     const CString& GetConfigFilePath();
@@ -26,9 +20,12 @@ private:
     CString U8toCS(const std::string& s);
     std::string CStoU8(const CString& s);
 
-private:
-    KeyReplaceTable m_savedKeys;
-    CString m_filePath;
+public:
     BOOL m_minimizeToTray;
+    KeyReplaceTable m_savedKeys;
+    BOOL m_disableLWin;
+
+private:
+    CString m_filePath;
 };
 

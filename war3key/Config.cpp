@@ -7,7 +7,8 @@ using namespace std;
 using json = nlohmann::json;
 
 #define CONFIG_SETTINGS         "Settings"
-#define CONFIG_SETTINGS_TRAY    "MinimizeToTray"
+#define CONFIG_MINIMIZE_TRAY    "MinimizeToTray"
+#define CONFIG_DISABLE_LWIN     "DisableLWin"
 #define CONFIG_REPLACEKEYS      "ReplaceKeys"
 #define CONFIG_KEY_NUM7         "Num7"
 #define CONFIG_KEY_NUM8         "Num8"
@@ -17,7 +18,8 @@ using json = nlohmann::json;
 #define CONFIG_KEY_NUM2         "Num2"
 
 Config::Config() :
-    m_minimizeToTray(FALSE)
+    m_minimizeToTray(FALSE),
+    m_disableLWin(FALSE)
 {
 }
 
@@ -28,12 +30,14 @@ Config::~Config()
 
 void Config::Init()
 {
-    ResetKeys();
+    Reset();
 
-    m_minimizeToTray = TRUE; // default checked
+    // default values
+    m_minimizeToTray = TRUE; 
+    m_disableLWin = FALSE;
 }
 
-void Config::ResetKeys()
+void Config::Reset()
 {
     m_savedKeys[VK_NUMPAD7] = VK_NUMPAD7;
     m_savedKeys[VK_NUMPAD8] = VK_NUMPAD8;
@@ -41,6 +45,8 @@ void Config::ResetKeys()
     m_savedKeys[VK_NUMPAD5] = VK_NUMPAD5;
     m_savedKeys[VK_NUMPAD1] = VK_NUMPAD1;
     m_savedKeys[VK_NUMPAD2] = VK_NUMPAD2;
+
+    m_disableLWin = FALSE;
 }
 
 BOOL Config::Load()
@@ -56,7 +62,10 @@ BOOL Config::Load()
         if (j.find(CONFIG_SETTINGS) != j.end()) {
             json settings = j[CONFIG_SETTINGS];
             if (settings.is_object()) {
-                m_minimizeToTray = (BOOL)settings.at(CONFIG_SETTINGS_TRAY).get<int>();
+                if (settings.find(CONFIG_MINIMIZE_TRAY) != settings.end())
+                    m_minimizeToTray = (BOOL)settings.at(CONFIG_MINIMIZE_TRAY).get<int>();
+                if (settings.find(CONFIG_DISABLE_LWIN) != settings.end())
+                    m_disableLWin = (BOOL)settings.at(CONFIG_DISABLE_LWIN).get<int>();
             }
         }
 
@@ -86,7 +95,8 @@ BOOL Config::Save()
         json j;
 
         json settings;
-        settings[CONFIG_SETTINGS_TRAY] = (int)m_minimizeToTray;
+        settings[CONFIG_MINIMIZE_TRAY] = (int)m_minimizeToTray;
+        settings[CONFIG_DISABLE_LWIN] = (int)m_disableLWin;
         j[CONFIG_SETTINGS] = settings;
 
         json keys;
@@ -110,21 +120,6 @@ BOOL Config::Save()
     }
 
     return TRUE;
-}
-
-KeyReplaceTable& Config::GetSavedKeys()
-{
-    return m_savedKeys;
-}
-
-BOOL Config::GetMinimizeToTray() const
-{
-    return m_minimizeToTray;
-}
-
-void Config::SetMinimizeToTray(BOOL enable)
-{
-    m_minimizeToTray = enable;
 }
 
 const CString& Config::GetConfigFilePath()

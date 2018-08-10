@@ -35,10 +35,11 @@ public:
         COMMAND_ID_HANDLER(ID_HELP_ABOUT, OnMenuHelpAbout)
         MESSAGE_HANDLER(WM_TRAY_ICON, OnTrayIcon)
         COMMAND_ID_HANDLER(ID_TRAY_EXIT, OnTrayExit)
+        COMMAND_HANDLER(IDC_CHECK_DISABLE_LWIN, BN_CLICKED, OnBnClickedCheckDisableLWin)
     ALT_MSG_MAP(MSG_MAP_ID_1)
         MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDownInEdit)
         MESSAGE_HANDLER(WM_CHAR, OnCharInEdit)
-	END_MSG_MAP()
+    END_MSG_MAP()
 
 // Handler prototypes (uncomment arguments if needed):
 //	LRESULT MessageHandler(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
@@ -62,9 +63,11 @@ public:
     LRESULT OnTrayIcon(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
     LRESULT OnTrayExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 
+    LRESULT OnBnClickedCheckDisableLWin(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+
 private:
     BOOL Init();
-    void InitKeyEdits();
+    void InitControls();
 	void CloseDialog(int nVal);
     void Cleanup();
 
@@ -75,8 +78,7 @@ private:
 private:
     CStatusBarCtrl m_statusBar;
     CContainedWindow m_editNum7, m_editNum8, m_editNum4, m_editNum5, m_editNum1, m_editNum2;
-    Config m_configFile;
+    Config m_config;
     TrayIcon m_trayIcon;
     TrayMenu m_trayMenu;
-    BOOL m_minimizeToTray;
 };

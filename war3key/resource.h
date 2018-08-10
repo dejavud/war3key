@@ -18,6 +18,8 @@
 #define IDC_EDIT_NUM1                   1004
 #define IDC_EDIT_NUM2                   1005
 #define IDC_STATUSBAR                   1006
+#define IDC_CHECK1                      1008
+#define IDC_CHECK_DISABLE_LWIN          1008
 #define ID_HELP_ABOUT                   32775
 #define ID_FILE_EXIT                    32776
 #define ID_TRAY_EXIT                    32777
@@ -30,7 +32,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        206
 #define _APS_NEXT_COMMAND_VALUE         32780
-#define _APS_NEXT_CONTROL_VALUE         1008
+#define _APS_NEXT_CONTROL_VALUE         1009
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
