@@ -89,8 +89,7 @@ BOOL MainDlg::Init()
         m_config.Save();  // if the config file dose not exist, new one
 
     KeyConfig& keyConfig = War3KeyImpl::Instance().GetKeyConfig();
-    keyConfig.m_keyReplaceTable = m_config.m_savedKeys;
-    keyConfig.m_disableLWin = m_config.m_disableLWin;
+    keyConfig = m_config.m_keyConfig;
 
     InitControls();
 
@@ -163,7 +162,10 @@ LRESULT MainDlg::OnMenuFileExit(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& 
 
 LRESULT MainDlg::OnMenuFileReset(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 {
-    m_config.Reset();
+    KeyConfig& keyConfig = War3KeyImpl::Instance().GetKeyConfig();
+    keyConfig.Reset();
+
+    m_config.m_keyConfig = keyConfig;
     m_config.Save();
 
     InitControls();
@@ -251,7 +253,7 @@ LRESULT MainDlg::OnKeyDownInEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
     else if (hEditWnd == m_editNum2)
         keyReplaceTable[VK_NUMPAD2] = vkCode;
 
-    m_config.m_savedKeys = keyReplaceTable;
+    m_config.m_keyConfig.m_keyReplaceTable = keyReplaceTable;
     m_config.Save();
 
     return 0;
@@ -293,11 +295,11 @@ LRESULT MainDlg::OnBnClickedCheckDisableLWin(WORD NotifyCode, WORD wID, HWND hWn
 {
     CButton checkBtn(hWndCtl);
 
-    BOOL checked = (checkBtn.GetCheck() == BST_CHECKED);
-    m_config.m_disableLWin = checked;
-    m_config.Save();
+    BOOL& disableLWin = War3KeyImpl::Instance().GetKeyConfig().m_disableLWin;
+    disableLWin = (checkBtn.GetCheck() == BST_CHECKED);
 
-    War3KeyImpl::Instance().GetKeyConfig().m_disableLWin = checked;
+    m_config.m_keyConfig.m_disableLWin = disableLWin;
+    m_config.Save();
 
     return 0;
 }

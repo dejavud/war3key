@@ -9,7 +9,6 @@ public:
     ~Config();
 
     void Init();
-    void Reset();
 
     BOOL Load();
     BOOL Save();
@@ -22,8 +21,7 @@ private:
 
 public:
     BOOL m_minimizeToTray;
-    KeyReplaceTable m_savedKeys;
-    BOOL m_disableLWin;
+    KeyConfig m_keyConfig;
 
 private:
     CString m_filePath;

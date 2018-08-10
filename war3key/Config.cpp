@@ -18,8 +18,7 @@ using json = nlohmann::json;
 #define CONFIG_KEY_NUM2         "Num2"
 
 Config::Config() :
-    m_minimizeToTray(FALSE),
-    m_disableLWin(FALSE)
+    m_minimizeToTray(FALSE)
 {
 }
 
@@ -30,23 +29,10 @@ Config::~Config()
 
 void Config::Init()
 {
-    Reset();
+    m_keyConfig.Reset();
 
     // default values
-    m_minimizeToTray = TRUE; 
-    m_disableLWin = FALSE;
-}
-
-void Config::Reset()
-{
-    m_savedKeys[VK_NUMPAD7] = VK_NUMPAD7;
-    m_savedKeys[VK_NUMPAD8] = VK_NUMPAD8;
-    m_savedKeys[VK_NUMPAD4] = VK_NUMPAD4;
-    m_savedKeys[VK_NUMPAD5] = VK_NUMPAD5;
-    m_savedKeys[VK_NUMPAD1] = VK_NUMPAD1;
-    m_savedKeys[VK_NUMPAD2] = VK_NUMPAD2;
-
-    m_disableLWin = FALSE;
+    m_minimizeToTray = TRUE;
 }
 
 BOOL Config::Load()
@@ -65,19 +51,19 @@ BOOL Config::Load()
                 if (settings.find(CONFIG_MINIMIZE_TRAY) != settings.end())
                     m_minimizeToTray = (BOOL)settings.at(CONFIG_MINIMIZE_TRAY).get<int>();
                 if (settings.find(CONFIG_DISABLE_LWIN) != settings.end())
-                    m_disableLWin = (BOOL)settings.at(CONFIG_DISABLE_LWIN).get<int>();
+                    m_keyConfig.m_disableLWin = (BOOL)settings.at(CONFIG_DISABLE_LWIN).get<int>();
             }
         }
 
         if (j.find(CONFIG_REPLACEKEYS) != j.end()) {
             json keys = j[CONFIG_REPLACEKEYS];
             if (keys.is_object()) {
-                m_savedKeys[VK_NUMPAD7] = (DWORD)keys.at(CONFIG_KEY_NUM7);
-                m_savedKeys[VK_NUMPAD8] = (DWORD)keys.at(CONFIG_KEY_NUM8);
-                m_savedKeys[VK_NUMPAD4] = (DWORD)keys.at(CONFIG_KEY_NUM4);
-                m_savedKeys[VK_NUMPAD5] = (DWORD)keys.at(CONFIG_KEY_NUM5);
-                m_savedKeys[VK_NUMPAD1] = (DWORD)keys.at(CONFIG_KEY_NUM1);
-                m_savedKeys[VK_NUMPAD2] = (DWORD)keys.at(CONFIG_KEY_NUM2);
+                m_keyConfig.m_keyReplaceTable[VK_NUMPAD7] = (DWORD)keys.at(CONFIG_KEY_NUM7);
+                m_keyConfig.m_keyReplaceTable[VK_NUMPAD8] = (DWORD)keys.at(CONFIG_KEY_NUM8);
+                m_keyConfig.m_keyReplaceTable[VK_NUMPAD4] = (DWORD)keys.at(CONFIG_KEY_NUM4);
+                m_keyConfig.m_keyReplaceTable[VK_NUMPAD5] = (DWORD)keys.at(CONFIG_KEY_NUM5);
+                m_keyConfig.m_keyReplaceTable[VK_NUMPAD1] = (DWORD)keys.at(CONFIG_KEY_NUM1);
+                m_keyConfig.m_keyReplaceTable[VK_NUMPAD2] = (DWORD)keys.at(CONFIG_KEY_NUM2);
             }
         }
     }
@@ -96,16 +82,16 @@ BOOL Config::Save()
 
         json settings;
         settings[CONFIG_MINIMIZE_TRAY] = (int)m_minimizeToTray;
-        settings[CONFIG_DISABLE_LWIN] = (int)m_disableLWin;
+        settings[CONFIG_DISABLE_LWIN] = (int)m_keyConfig.m_disableLWin;
         j[CONFIG_SETTINGS] = settings;
 
         json keys;
-        keys[CONFIG_KEY_NUM7] = m_savedKeys[VK_NUMPAD7];
-        keys[CONFIG_KEY_NUM8] = m_savedKeys[VK_NUMPAD8];
-        keys[CONFIG_KEY_NUM4] = m_savedKeys[VK_NUMPAD4];
-        keys[CONFIG_KEY_NUM5] = m_savedKeys[VK_NUMPAD5];
-        keys[CONFIG_KEY_NUM1] = m_savedKeys[VK_NUMPAD1];
-        keys[CONFIG_KEY_NUM2] = m_savedKeys[VK_NUMPAD2];
+        keys[CONFIG_KEY_NUM7] = m_keyConfig.m_keyReplaceTable[VK_NUMPAD7];
+        keys[CONFIG_KEY_NUM8] = m_keyConfig.m_keyReplaceTable[VK_NUMPAD8];
+        keys[CONFIG_KEY_NUM4] = m_keyConfig.m_keyReplaceTable[VK_NUMPAD4];
+        keys[CONFIG_KEY_NUM5] = m_keyConfig.m_keyReplaceTable[VK_NUMPAD5];
+        keys[CONFIG_KEY_NUM1] = m_keyConfig.m_keyReplaceTable[VK_NUMPAD1];
+        keys[CONFIG_KEY_NUM2] = m_keyConfig.m_keyReplaceTable[VK_NUMPAD2];
         j[CONFIG_REPLACEKEYS] = keys;
 
         ofstream f(GetConfigFilePath());

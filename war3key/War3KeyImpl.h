@@ -11,6 +11,18 @@ struct KeyConfig
 
     KeyConfig() : m_disableLWin(FALSE) 
     {}
+
+    void Reset() 
+    {
+        m_keyReplaceTable[VK_NUMPAD7] = VK_NUMPAD7;
+        m_keyReplaceTable[VK_NUMPAD8] = VK_NUMPAD8;
+        m_keyReplaceTable[VK_NUMPAD4] = VK_NUMPAD4;
+        m_keyReplaceTable[VK_NUMPAD5] = VK_NUMPAD5;
+        m_keyReplaceTable[VK_NUMPAD1] = VK_NUMPAD1;
+        m_keyReplaceTable[VK_NUMPAD2] = VK_NUMPAD2;
+
+        m_disableLWin = FALSE;
+    }
 };
 
 class War3KeyImpl
