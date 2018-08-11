@@ -57,13 +57,14 @@ private:
 
     BOOL IsChatBoxOpen(); // determine whether the chat box is open in game
 
-    LPVOID RetrieveGameDllBaseAddr(DWORD war3Pid);
+    void RetrieveGameInfo(DWORD war3Pid);
+    DWORD RetrieveChatBoxStatusFlagAddr(HANDLE hProcess, CString basedModName, DWORD offset);
 
 private:
     HHOOK m_hook;
     HWND m_hWar3Wnd;
     DWORD m_war3Pid;
-    LPVOID m_war3GameDllBaseAddr;
+    DWORD m_war3GameChatBoxFlagAddr;
     KeyNameTable m_nameTable;
     KeyConfig m_keyConfig;
 };

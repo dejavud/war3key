@@ -2,8 +2,12 @@
 #include "War3KeyImpl.h"
 #include <Psapi.h>
 
+#define WAR3_GAME_EXE_NAME _T("War3.exe")
 #define WAR3_GAME_DLL_NAME _T("Game.dll")
-#define WAR3_CHATBOX_OFFSET_1_27_0_52240 0xBDAA14  // game version 1.27.0.52240
+#define WAR3_CHATBOX_FLAG_OFFSET_1_20_E_BASE_ON_EXE 0x0005CB8C
+#define WAR3_CHATBOX_FLAG_OFFSET_1_24_E_BASE_ON_DLL 0x00AE8450
+#define WAR3_CHATBOX_FLAG_OFFSET_1_27_A_BASE_ON_DLL 0x00BDAA14
+
 
 War3KeyImpl& War3KeyImpl::Instance()
 {
@@ -15,7 +19,7 @@ War3KeyImpl::War3KeyImpl() :
     m_hook(NULL),
     m_hWar3Wnd(NULL),
     m_war3Pid(0),
-    m_war3GameDllBaseAddr(NULL)
+    m_war3GameChatBoxFlagAddr(0)
 {
     InitKeyNameTable();
 }
@@ -34,7 +38,7 @@ BOOL War3KeyImpl::InstallHook(HWND hWar3Wnd)
     if (m_hook != NULL) {
         m_hWar3Wnd = hWar3Wnd;
         ::GetWindowThreadProcessId(m_hWar3Wnd, &m_war3Pid);
-        m_war3GameDllBaseAddr = RetrieveGameDllBaseAddr(m_war3Pid);
+        RetrieveGameInfo(m_war3Pid);
 
         return TRUE;
     }
@@ -106,10 +110,10 @@ BOOL War3KeyImpl::IsChatBoxOpen()
     if (hProcess == NULL)
         return FALSE;
 
-    if (m_war3GameDllBaseAddr == NULL) // not found base address of "Game.dll" from "war3.exe"
+    if (m_war3GameChatBoxFlagAddr == 0) // not found chat box status flag address from "Game.dll" or "War3.exe"
         return FALSE;
 
-    LPCVOID pBase = (LPCVOID)((DWORD)m_war3GameDllBaseAddr + WAR3_CHATBOX_OFFSET_1_27_0_52240); // magic number, found by "cheat engine", maybe vary with the game version(currently 1.27.0.52240). fix me~
+    LPCVOID pBase = (LPCVOID)m_war3GameChatBoxFlagAddr; // magic number, found by "cheat engine", maybe vary with the game version.
     int chatEnabled = 0;
     BOOL r = ::ReadProcessMemory(hProcess, pBase, &chatEnabled, sizeof(chatEnabled), NULL);
     ::CloseHandle(hProcess);
@@ -117,34 +121,83 @@ BOOL War3KeyImpl::IsChatBoxOpen()
     return (chatEnabled != 0);
 }
 
-LPVOID War3KeyImpl::RetrieveGameDllBaseAddr(DWORD war3Pid)
+void War3KeyImpl::RetrieveGameInfo(DWORD war3Pid)
 {
-    LPVOID result = NULL;
+    HANDLE hProcess = ::OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, m_war3Pid);
+    if (hProcess == NULL)
+        return;
 
-    HANDLE hProcess = ::OpenProcess(PROCESS_VM_READ|PROCESS_QUERY_INFORMATION, FALSE, m_war3Pid);
-    if (hProcess != NULL) {
-        HMODULE hMods[1024];
-        DWORD cbNeeded = 0;
-        if (::EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded)) {
-            for (DWORD i = 0; i < (cbNeeded / sizeof(HMODULE)); i++) {
-                HMODULE hMod = hMods[i];
+    // get "game.dll" path
+    TCHAR tmpPath[MAX_PATH] = { 0 };
+    ::GetModuleFileNameEx(hProcess, NULL, tmpPath, MAX_PATH);
+    CString exePath(tmpPath);
+    CString dllPath = exePath.Left(exePath.ReverseFind(_T('\\')) + 1) + WAR3_GAME_DLL_NAME;
 
-                TCHAR szModName[MAX_PATH];
-                if (::GetModuleBaseName(hProcess, hMod, szModName, sizeof(szModName) / sizeof(TCHAR))) {
-                    CString modName(szModName);
-                    if (modName.CompareNoCase(WAR3_GAME_DLL_NAME) == 0) {
-                        MODULEINFO modInfo = { 0 };
-                        if (::GetModuleInformation(hProcess, hMod, &modInfo, sizeof(modInfo))) {
-                            result = modInfo.lpBaseOfDll;
-                        }
-                        break;
-                    }
+    // get file version number of "game.dll"
+    DWORD dwHandle = 0;
+    DWORD fviSize = ::GetFileVersionInfoSize(dllPath, &dwHandle);
+
+    CString verStr;
+    char* fviData = new char[fviSize];
+    if (::GetFileVersionInfo(dllPath, dwHandle, fviSize, fviData)) {
+        LPVOID pBuffer = NULL;
+        UINT size = 0;
+        if (::VerQueryValue(fviData, _T("\\"), &pBuffer, &size)) {
+            VS_FIXEDFILEINFO* pFileInfo = (VS_FIXEDFILEINFO*)pBuffer;
+            ATLASSERT(pFileInfo != NULL);
+            verStr.Format(_T("%d.%d.%d.%d"),
+                (pFileInfo->dwFileVersionMS >> 16) & 0xffff,
+                (pFileInfo->dwFileVersionMS >> 0) & 0xffff,
+                (pFileInfo->dwFileVersionLS >> 16) & 0xffff,
+                (pFileInfo->dwFileVersionLS >> 0) & 0xffff
+            );
+        }
+    }
+    delete[] fviData;
+
+    // get chat box status flag address
+    if (verStr.CompareNoCase(_T("1.20.4.6074")) == 0) {  // 1.20e, offset based of "war3.exe"
+        m_war3GameChatBoxFlagAddr = RetrieveChatBoxStatusFlagAddr(hProcess, WAR3_GAME_EXE_NAME, WAR3_CHATBOX_FLAG_OFFSET_1_20_E_BASE_ON_EXE);
+    }
+    else if (verStr.CompareNoCase(_T("1.24.4.6387")) == 0) { // 1.24e, offset based of "game.dll"
+        m_war3GameChatBoxFlagAddr = RetrieveChatBoxStatusFlagAddr(hProcess, WAR3_GAME_DLL_NAME, WAR3_CHATBOX_FLAG_OFFSET_1_24_E_BASE_ON_DLL);
+    }
+    else if (verStr.CompareNoCase(_T("1.27.0.52240")) == 0) { // 1.27a, offset based of "game.dll"
+        m_war3GameChatBoxFlagAddr = RetrieveChatBoxStatusFlagAddr(hProcess, WAR3_GAME_DLL_NAME, WAR3_CHATBOX_FLAG_OFFSET_1_27_A_BASE_ON_DLL);
+    }
+    else {
+        m_war3GameChatBoxFlagAddr = 0;
+    }
+
+    ::CloseHandle(hProcess);
+}
+
+DWORD War3KeyImpl::RetrieveChatBoxStatusFlagAddr(HANDLE hProcess, CString basedModName, DWORD offset)
+{
+    ATLASSERT(hProcess != NULL);
+
+    HMODULE hBasedMod = NULL;
+
+    HMODULE hMods[1024];
+    DWORD cbNeeded = 0;
+    if (::EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded)) {
+        for (DWORD i = 0; i < (cbNeeded / sizeof(HMODULE)); i++) {
+            HMODULE hMod = hMods[i];
+            TCHAR szModName[MAX_PATH];
+            if (::GetModuleBaseName(hProcess, hMod, szModName, sizeof(szModName) / sizeof(TCHAR))) {
+                CString modName(szModName);
+                if (modName.CompareNoCase(basedModName) == 0) {
+                    hBasedMod = hMod;
+                    break;
                 }
             }
         }
     }
 
-    return result;
+    if (hBasedMod == NULL)
+        return 0;
+
+    return (DWORD)hBasedMod + offset;
 }
 
 BOOL War3KeyImpl::SetDebugPrivilege(BOOL enable)
