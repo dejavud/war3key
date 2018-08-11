@@ -13,11 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Chinese (Simplified, PRC) resources
+// English (United States) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
-LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
-#pragma code_page(936)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -34,11 +34,11 @@ IDR_MAINFRAME           ICON                    "res\\war3key.ico"
 // Dialog
 //
 
-IDD_MAINDLG DIALOGEX 0, 0, 127, 99
+IDD_MAINDLG DIALOGEX 0, 0, 127, 96
 STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
 CAPTION "War3Key"
 MENU IDR_MAINMENU
-FONT 9, "ÐÂËÎÌå", 400, 0, 0x86
+FONT 9, "NSimSun", 400, 0, 0x0
 BEGIN
     LTEXT           "Num 7:",IDC_STATIC,5,9,25,8
     EDITTEXT        IDC_EDIT_NUM7,31,7,28,13,ES_AUTOHSCROLL
@@ -52,8 +52,8 @@ BEGIN
     EDITTEXT        IDC_EDIT_NUM1,31,47,28,13,ES_AUTOHSCROLL
     LTEXT           "Num 2:",IDC_STATIC,68,49,25,8
     EDITTEXT        IDC_EDIT_NUM2,93,47,28,13,ES_AUTOHSCROLL
-    CONTROL         "",IDC_STATUSBAR,"msctls_statusbar32",WS_TABSTOP,0,84,126,14
-    CONTROL         "Disable LWin",IDC_CHECK_DISABLE_LWIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,67,59,10
+    CONTROL         "",IDC_STATUSBAR,"msctls_statusbar32",WS_TABSTOP,0,81,126,14
+    CONTROL         "Disable LWin",IDC_CHECK_DISABLE_LWIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,67,76,10
 END
 
 
@@ -68,7 +68,7 @@ BEGIN
     IDD_MAINDLG, DIALOG
     BEGIN
         RIGHTMARGIN, 126
-        BOTTOMMARGIN, 98
+        BOTTOMMARGIN, 95
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -94,12 +94,12 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "080404b0"
+        BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "War3Key"
             VALUE "FileVersion", "0.1.0.0"
             VALUE "InternalName", "war3key"
-            VALUE "LegalCopyright", "Copyright 2018 ´ó¹·"
+            VALUE "LegalCopyright", "Copyright 2018 Nemo"
             VALUE "OriginalFilename", "war3key.exe"
             VALUE "ProductName", "War3Key"
             VALUE "ProductVersion", "0.1.0.0"
@@ -107,7 +107,7 @@ BEGIN
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x804, 1200
+        VALUE "Translation", 0x409, 1200
     END
 END
 
@@ -152,31 +152,6 @@ BEGIN
 END
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE
-BEGIN
-    IDR_MAINFRAME           "War3Key"
-    IDS_TOOLTIPS            "War3Key is a hotkey utility for Warcraft III."
-    IDS_STATUSINFO_READY    "Ready."
-    IDS_STATUSINFO_ACTIVATED "Activated."
-    IDS_STATUSINFO_DEACTIVATED "Deactivated."
-END
-
-#endif    // Chinese (Simplified, PRC) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -200,6 +175,21 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDR_MAINFRAME           "War3Key"
+    IDS_TOOLTIPS            "War3Key is a hotkey utility for Warcraft III."
+    IDS_STATUSINFO_READY    "Ready."
+    IDS_STATUSINFO_ACTIVATED "Activated."
+    IDS_STATUSINFO_DEACTIVATED "Deactivated."
+END
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
