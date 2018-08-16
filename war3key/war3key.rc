@@ -13,6 +13,154 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
+// Chinese (Simplified, PRC) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAINDLG DIALOGEX 0, 0, 127, 96
+STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_CAPTION | WS_SYSMENU
+CAPTION "War3Key"
+MENU IDR_MAINMENU
+FONT 9, "新宋体", 400, 0, 0x86
+BEGIN
+    LTEXT           "Num 7:",IDC_STATIC,5,9,25,8
+    EDITTEXT        IDC_EDIT_NUM7,31,7,28,13,ES_AUTOHSCROLL
+    LTEXT           "Num 8:",IDC_STATIC,68,9,25,8
+    EDITTEXT        IDC_EDIT_NUM8,93,7,28,13,ES_AUTOHSCROLL
+    LTEXT           "Num 4:",IDC_STATIC,5,29,25,8
+    EDITTEXT        IDC_EDIT_NUM4,31,27,28,13,ES_AUTOHSCROLL
+    LTEXT           "Num 5:",IDC_STATIC,68,29,25,8
+    EDITTEXT        IDC_EDIT_NUM5,93,27,28,13,ES_AUTOHSCROLL
+    LTEXT           "Num 1:",IDC_STATIC,5,49,25,8
+    EDITTEXT        IDC_EDIT_NUM1,31,47,28,13,ES_AUTOHSCROLL
+    LTEXT           "Num 2:",IDC_STATIC,68,49,25,8
+    EDITTEXT        IDC_EDIT_NUM2,93,47,28,13,ES_AUTOHSCROLL
+    CONTROL         "",IDC_STATUSBAR,"msctls_statusbar32",WS_TABSTOP,0,81,126,14
+    CONTROL         "禁用Win键",IDC_CHECK_DISABLE_LWIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,5,67,76,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_MAINDLG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 126
+        BOTTOMMARGIN, 95
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "FileDescription", "War3Key"
+            VALUE "FileVersion", "0.1.0.0"
+            VALUE "InternalName", "war3key"
+            VALUE "LegalCopyright", "Copyright 2018 大狗"
+            VALUE "OriginalFilename", "war3key.exe"
+            VALUE "ProductName", "War3Key"
+            VALUE "ProductVersion", "0.1.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_MAINDLG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINMENU MENU
+BEGIN
+    POPUP "文件"
+    BEGIN
+        MENUITEM "重置",                          ID_FILE_RESET
+        MENUITEM "最小化到托盘",                      ID_FILE_MINIMIZETOTRAY
+        MENUITEM SEPARATOR
+        MENUITEM "退出",                          ID_FILE_EXIT
+    END
+    POPUP "帮助"
+    BEGIN
+        MENUITEM "关于",                          ID_HELP_ABOUT
+    END
+END
+
+IDR_TRAYMENU MENU
+BEGIN
+    POPUP "托盘"
+    BEGIN
+        MENUITEM "退出",                          ID_TRAY_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDR_MAINFRAME           "War3Key"
+    IDS_TOOLTIPS            "War3Key 是一款魔兽争霸3的改键工具。"
+    IDS_STATUSINFO_READY    "就绪。"
+    IDS_STATUSINFO_ACTIVATED "已生效。"
+    IDS_STATUSINFO_DEACTIVATED "已停止。"
+END
+
+#endif    // Chinese (Simplified, PRC) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
